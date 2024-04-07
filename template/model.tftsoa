@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class #model# extends Model
+{
+     public $timestamps = false;
+     protected $table = '#table#';
+     protected $primaryKey = 'id';
+     protected $fillable = [
+          #attributs#
+     ];
+     public static function getNextId()
+     {
+          $lastID = #model#::max('id');
+          $lastNumber = intval(substr($lastID, 3));
+          $nextNumber = $lastNumber + 1;
+          $nextID = '#prefix#' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+          return $nextID;
+     }
+     public static function insert($data)
+     {
+          $#table# = new #model#();
+          $#table#->id = self::getNextId();
+     #var_atttributs#
+          $#table#->save();
+     }
+}

@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Etudiant;
+use App\Http\Requests\EtudiantRequest;
+
+class #tablecontroller# extends Controller
+{
+    public function index(){
+        $#classe# = #table#::all();
+        return view('#classe#.index', ['#classe#' => $#classe#]);
+    }
+    public function create(){
+        return view('#classe#.create');
+    }
+    public function insert(#tableRequest# $request){
+        $data = array(
+            #attributs#
+        );
+        #table#::insert($data);
+    }
+    public function update(#tableRequest# $request){
+        $#classe# = #table#::find($request->id);
+        #attributs_update#
+        $#classe#->save();
+    }
+    public function delete($id){
+        $#classe# = #table#::findOrFail($id);
+        $#classe#->delete();
+    }
+}
