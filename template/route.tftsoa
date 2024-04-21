@@ -1,0 +1,9 @@
+Route::prefix('#classe#')->name('#classe#.')->group(function(){
+    $controller = App\Http\Controllers\#nomController#::class;
+    Route::get('/', [$controller, 'index'])->name('index');
+    Route::get('/create', [$controller, 'create'])->name('create');
+    Route::post('/', [$controller, 'insert'])->name('insert');
+    Route::get('/{id}/edit', [$controller, 'edit'])->name('edit');
+    Route::put('/{id}', [$controller, 'update'])->name('update');
+    Route::delete('/{id}', [$controller, 'delete'])->name('delete');
+});

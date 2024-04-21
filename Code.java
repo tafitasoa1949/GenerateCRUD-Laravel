@@ -2,8 +2,6 @@ package shakai;
 
 import java.sql.*;
 
-import shakai.Colonne;
-
 import java.io.*;
 
 public class Code {
@@ -49,11 +47,11 @@ public class Code {
           return contenu.toString();
      }
 
-     public String replaceVariableModel(String table, Colonne[] list_Colonnes, String prefix, String contenu)
+     public String replaceVariableModel(String table, Colonne[] list_Colonnes, String function_sequence, String contenu)
                throws Exception {
           contenu = contenu.replace("#model#", changeMaj1erLettre(table));
           contenu = contenu.replace("#table#", table);
-          contenu = contenu.replace("#prefix#", prefix);
+          contenu = contenu.replace("#sequence_name#", function_sequence);
           StringBuilder attributs = new StringBuilder();
           StringBuilder var_atttributs = new StringBuilder();
           for (int i = 0; i < list_Colonnes.length; i++) {
@@ -141,7 +139,7 @@ public class Code {
                contenu = contenu.replace("#tablecontroller#", changeMaj1erLettre(table) + "Controller");
                contenu = contenu.replace("#table#", changeMaj1erLettre(table));
                contenu = contenu.replace("#classe#", table);
-               contenu = contenu.replace("#tableRequest#", nom_request);
+               contenu = contenu.replace("#request_name#", nom_request);
                StringBuilder attributs = new StringBuilder();
                StringBuilder atttributs_update = new StringBuilder();
                for (int i = 1; i < list_Colonnes.length; i++) {
@@ -165,7 +163,7 @@ public class Code {
           return contenu;
      }
 
-     public void generateController(String url_projet, String table, String nom_request, Connection con)
+     public String generateController(String url_projet, String table, String nom_request, Connection con)
                throws Exception {
           try {
                Colonne[] list_Colonnes = this.getAllColonne(table, con);
@@ -181,16 +179,49 @@ public class Code {
                FileWriter writer = new FileWriter(cheminFichierFinal);
                writer.write(contenuFinal);
                writer.close();
+               return changeMaj1erLettre(table) + "Controller";
           } catch (Exception e) {
                throw e;
           }
      }
 
-     public Code(String url_projet, String table, String prefix, Connection con) throws Exception {
+     public void generateRoute(String url_projet, String classe, String nomController) throws Exception {
           try {
-               this.generateModel(url_projet, table, prefix, con);
+               String nomFichierTemplate = "template/route.tftsoa";
+               String contenu = readBodyFile(nomFichierTemplate);
+               contenu = contenu.replace("#classe#", classe);
+               contenu = contenu.replace("#nomController#", nomController);
+
+               // Chemin du fichier de route
+               String cheminRoute = url_projet + "routes/web.php";
+
+               // Lecture du contenu existant du fichier de route
+               String contenuExistant = readBodyFile(cheminRoute);
+
+               // Ecriture du contenu existant suivi du nouveau contenu
+               String nouveauContenu = contenuExistant + "//\n" + contenu;
+               writeToFile(cheminRoute, nouveauContenu);
+
+               // Lecture du contenu du fichier de route pour vérification
+               String route = readBodyFile(cheminRoute);
+          } catch (Exception e) {
+               throw e;
+          }
+     }
+
+     // Méthode pour écrire dans un fichier
+     public void writeToFile(String chemin, String contenu) throws IOException {
+          try (FileWriter writer = new FileWriter(chemin)) {
+               writer.write(contenu);
+          }
+     }
+
+     public Code(String url_projet, String table, String function_sequence, Connection con) throws Exception {
+          try {
+               this.generateModel(url_projet, table, function_sequence, con);
                String nomRequest = this.generateRequest(url_projet, table, con);
-               this.generateController(url_projet, table, nomRequest, con);
+               String nomController = this.generateController(url_projet, table, nomRequest, con);
+               // this.generateRoute(url_projet, table, nomController);
           } catch (Exception e) {
                e.printStackTrace();
           }

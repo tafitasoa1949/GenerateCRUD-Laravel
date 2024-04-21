@@ -3,31 +3,34 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Etudiant;
-use App\Http\Requests\EtudiantRequest;
+use App\Models\#classe#;
+use App\Http\Requests\#request_name#;
 
 class #tablecontroller# extends Controller
 {
     public function index(){
         $#classe# = #table#::all();
-        return view('#classe#.index', ['#classe#' => $#classe#]);
+        return view('#classe#.index', ['#classe#s' => $#classe#]);
     }
     public function create(){
         return view('#classe#.create');
     }
-    public function insert(#tableRequest# $request){
+    public function insert(#request_name# $request){
         $data = array(
             #attributs#
         );
         #table#::insert($data);
+        return redirect()->route('#classe#.index');
     }
-    public function update(#tableRequest# $request){
+    public function update(#request_name# $request){
         $#classe# = #table#::find($request->id);
         #attributs_update#
         $#classe#->save();
+        return redirect()->route('#classe#.index');
     }
     public function delete($id){
         $#classe# = #table#::findOrFail($id);
         $#classe#->delete();
+        return redirect()->route('#classe#.index');
     }
 }
